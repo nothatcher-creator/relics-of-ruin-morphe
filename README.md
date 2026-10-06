@@ -9,9 +9,15 @@ Target:
 
 ## Stage 1
 
-The first patch is a boot-safe proof-of-hook. It fingerprints:
+The original 0.1.0 build targeted:
 
-`com.unity3d.player.UnityPlayerActivity.onCreate(android.os.Bundle)`
+`UnityPlayerActivity.onCreate(Bundle)`
+
+In the inspected APK that method is **native** and has no DEX bytecode body, so Morphe could not inject an instruction into it.
+
+Version **0.1.1** instead targets the APK's executable Java wrapper:
+
+`UnityPlayerActivity.onCreate$002(Activity, Bundle)`
 
 and injects a tiny runtime extension that displays:
 
