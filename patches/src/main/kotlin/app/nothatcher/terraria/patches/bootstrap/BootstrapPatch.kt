@@ -1,32 +1,20 @@
 package app.nothatcher.terraria.patches.bootstrap
 
-import app.morphe.patcher.extensions.InstructionExtensions.addInstruction
 import app.morphe.patcher.patch.bytecodePatch
 import app.nothatcher.terraria.patches.shared.Constants.COMPATIBILITY_TERRARIA
 
-private const val EXTENSION_CLASS = "Lapp/nothatcher/terraria/extension/Bootstrap;"
-
+/**
+ * Diagnostic build 0.1.3.
+ *
+ * This patch intentionally changes no bytecode, resources, native libraries,
+ * licensing code, or application behavior. It exists only to test whether
+ * Morphe's rebuild/re-sign process can produce a Terraria APK that launches.
+ */
 @Suppress("unused")
-val relicsOfRuinBootstrapPatch = bytecodePatch(
-    name = "Relics of Ruin - Bootstrap",
-    description = "Injects a startup marker after Activity.onCreate in Terraria 1.4.5.8.5.",
+val relicsOfRuinNoOpPatch = bytecodePatch(
+    name = "Relics of Ruin - No-op compatibility test",
+    description = "Makes no game changes; tests whether a Morphe-rebuilt Terraria APK can launch.",
     default = true
 ) {
     compatibleWith(COMPATIBILITY_TERRARIA)
-
-    extendWith("extensions/extension.mpe")
-
-    execute {
-        val method = UnityPlayerActivityOnCreateWrapperFingerprint.method
-
-        // The inspected wrapper contains:
-        // 0: invoke-super/range {p0, p1}, Activity->onCreate(Bundle)
-        // 1: return-void
-        //
-        // Insert AFTER Activity.onCreate and BEFORE return-void.
-        method.addInstruction(
-            1,
-            "invoke-static {p0}, $EXTENSION_CLASS->onTerrariaStart(Landroid/app/Activity;)V"
-        )
-    }
 }

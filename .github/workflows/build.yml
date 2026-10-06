@@ -41,14 +41,13 @@ jobs:
           mkdir -p dist
           MPP="$(find patches/build/libs -maxdepth 1 -type f -name '*.mpp' | head -n 1)"
           test -n "$MPP"
-          cp "$MPP" dist/relics-of-ruin-0.1.2.mpp
-          ls -lah dist
+          cp "$MPP" dist/relics-of-ruin-0.1.3.mpp
 
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
         with:
-          name: relics-of-ruin-0.1.2
-          path: dist/relics-of-ruin-0.1.2.mpp
+          name: relics-of-ruin-0.1.3
+          path: dist/relics-of-ruin-0.1.3.mpp
 
       - name: Publish GitHub release
         env:
@@ -56,32 +55,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if gh release view v0.1.2 >/dev/null 2>&1; then
-            gh release upload v0.1.2 dist/relics-of-ruin-0.1.2.mpp --clobber
+          if gh release view v0.1.3 >/dev/null 2>&1; then
+            gh release upload v0.1.3 dist/relics-of-ruin-0.1.3.mpp --clobber
           else
-            gh release create v0.1.2 dist/relics-of-ruin-0.1.2.mpp \
-              --title "Relics of Ruin 0.1.2" \
-              --notes "Stage 1 runtime fix: inject after Activity.onCreate and simplify startup marker."
-          fi
-
-      - name: Update Morphe source manifest
-        shell: bash
-        run: |
-          cat > patches-bundle.json <<'JSON'
-          {
-            "created_at": "2026-10-06T23:15:00Z",
-            "description": "Relics of Ruin Stage 1 runtime fix for Terraria Android 1.4.5.8.5",
-            "download_url": "https://github.com/nothatcher-creator/relics-of-ruin-morphe/releases/download/v0.1.2/relics-of-ruin-0.1.2.mpp",
-            "signature_download_url": null,
-            "version": "0.1.2"
-          }
-          JSON
-
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add patches-bundle.json
-
-          if ! git diff --cached --quiet; then
-            git commit -m "Update Morphe patch bundle manifest"
-            git push
+            gh release create v0.1.3 dist/relics-of-ruin-0.1.3.mpp \
+              --title "Relics of Ruin 0.1.3" \
+              --notes "Diagnostic no-op patch. It intentionally injects nothing, to test whether a Morphe-rebuilt Terraria 1.4.5.8.5 APK launches at all."
           fi
