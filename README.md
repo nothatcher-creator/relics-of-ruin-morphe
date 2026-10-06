@@ -7,23 +7,31 @@ Target:
 - Version: `1.4.5.8.5`
 - Engine: Unity / IL2CPP
 
-## Stage 1
+## Stage 1 history
 
-The original 0.1.0 build targeted:
+### 0.1.0
+Targeted `UnityPlayerActivity.onCreate(Bundle)`, but that method is native in the inspected APK and has no DEX body.
 
-`UnityPlayerActivity.onCreate(Bundle)`
-
-In the inspected APK that method is **native** and has no DEX bytecode body, so Morphe could not inject an instruction into it.
-
-Version **0.1.1** instead targets the APK's executable Java wrapper:
+### 0.1.1
+Retargeted the executable wrapper:
 
 `UnityPlayerActivity.onCreate$002(Activity, Bundle)`
 
-and injects a tiny runtime extension that displays:
+The patch applied, but runtime testing showed Terraria crashed because the injected call was placed before the wrapper called `Activity.onCreate(Bundle)`.
+
+### 0.1.2
+The inspected wrapper contains only:
+
+1. `invoke-super/range ... Activity.onCreate(Bundle)`
+2. `return-void`
+
+The bootstrap is now inserted **between those two instructions**. The extension was also simplified to a direct Toast using the application context.
+
+Expected marker:
 
 **Relics of Ruin loaded**
 
-If that appears and Terraria still launches, the Morphe bytecode hook and extension injection are working.
+If Terraria launches and shows that marker, the Java-side Morphe bootstrap is stable and Stage 2 can move to IL2CPP gameplay hooks.
 
 ## Planned Stage 2
 
