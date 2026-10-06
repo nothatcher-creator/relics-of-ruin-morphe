@@ -13,12 +13,12 @@ public final class Bootstrap {
         if (activity == null || shown) return;
         shown = true;
 
-        activity.runOnUiThread(() ->
-            Toast.makeText(
-                activity,
-                "Relics of Ruin loaded",
-                Toast.LENGTH_LONG
-            ).show()
-        );
+        // This wrapper runs on the Activity startup path, so avoid extra
+        // runOnUiThread/lambda machinery and keep Stage 1 as small as possible.
+        Toast.makeText(
+            activity.getApplicationContext(),
+            "Relics of Ruin loaded",
+            Toast.LENGTH_LONG
+        ).show();
     }
 }
