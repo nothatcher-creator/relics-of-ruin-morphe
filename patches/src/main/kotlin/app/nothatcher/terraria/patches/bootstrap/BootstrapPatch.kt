@@ -17,7 +17,7 @@ val relicsOfRuinBootstrapPatch = bytecodePatch(
     extendWith("extensions/extension.mpe")
 
     execute {
-        UnityPlayerActivityOnCreateFingerprint.method.addInstruction(
+        UnityPlayerActivityOnCreateWrapperFingerprint.method.addInstruction(
             0,
             "invoke-static {p0}, $EXTENSION_CLASS->onTerrariaStart(Landroid/app/Activity;)V"
         )
